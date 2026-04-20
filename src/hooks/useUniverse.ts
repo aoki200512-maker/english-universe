@@ -61,7 +61,7 @@ function calculateUniverseCoords(originalNodes: Node[], originalLinks: Link[]): 
     parentLinks.forEach(link => {
       const parentId = typeof link.source === 'object' ? link.source.id : link.source;
       const parentNode = virtualNodes.find(v => v.originalId === parentId && v.scale === 1);
-      if (!parentNode) return;
+      if (!parentNode || typeof parentNode.x !== 'number' || typeof parentNode.y !== 'number') return;
 
       // 等分割の計算（同じ親に繋がっているリンクの総数で割る）
       const siblings = originalLinks.filter(l => (typeof l.source === 'object' ? l.source.id : l.source) === parentId);
@@ -94,6 +94,7 @@ function calculateUniverseCoords(originalNodes: Node[], originalLinks: Link[]): 
       const parentInstances = virtualNodes.filter(v => v.originalId === originalParentId && v.scale === 2);
 
       parentInstances.forEach(pInst => {
+        if (typeof pInst.x !== 'number' || typeof pInst.y !== 'number') return; 
         const siblings = originalLinks.filter(l => (typeof l.source === 'object' ? l.source.id : l.source) === originalParentId);
         const index = siblings.findIndex(l => (typeof l.target === 'object' ? l.target.id : l.target) === node.id);
         
