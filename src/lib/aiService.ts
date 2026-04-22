@@ -61,7 +61,7 @@ export async function generateWordGraph(word: string): Promise<AIResponse> {
 例
 1. 語源 / パーツ (Scale 1)
 入力: port
-特徴: 最小単位。親はいない。多義的な品詞（名詞・動詞）を網羅。
+特徴: 最小単位。親はいない。多義的な品詞（名詞・動詞）を網羅。語源でなくても最小単位ならこれにする。
 
 
 {
