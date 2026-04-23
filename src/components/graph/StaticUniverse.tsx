@@ -50,7 +50,7 @@ export default function StaticUniverse() {//page.tsxから呼ばれて実行
 
   const [isGenerating, setIsGenerating] = useState(false);
 
-const handleConfirmRegistration = async (word: string): Promise<{ success: boolean; isVirtual?: boolean; message?: string }> => {
+const handleConfirmRegistration = async (word: string): Promise<{ success: boolean; uuid?: string; isVirtual?: boolean; message?: string }> => {
     setIsGenerating(true); // 観測（生成）開始！
 
     try {
@@ -60,6 +60,8 @@ const handleConfirmRegistration = async (word: string): Promise<{ success: boole
         body: JSON.stringify({ word }),
       });
       const resData = await response.json();
+      console.log("--- DEBUG: API Response Body ---");
+      console.log(JSON.stringify(resData, null, 2));
 
       if (resData.isVirtual) {
         // ★ 幻の星（Scale 4）だった場合
@@ -71,6 +73,8 @@ const handleConfirmRegistration = async (word: string): Promise<{ success: boole
         const errorData = await response.json(); // サーバーが返したエラー詳細を読む
         throw new Error(`星の生成に失敗しました: ${errorData.error || '不明なエラー'}`);
       }
+
+      const newUuid = resData.id || resData.uuid;
 
       // 1. 最新の宇宙データを取得し、再計算（螺旋や軌道の配置を更新）
       await refresh(); 
@@ -84,11 +88,11 @@ const handleConfirmRegistration = async (word: string): Promise<{ success: boole
         
         if (newStar && typeof newStar.x === 'number' && typeof newStar.y === 'number') {
           jumpTo(newStar.x, newStar.y);
-          console.log(`あおき、新星「${word}」への跳躍に成功したぞ！`);
+          console.log(`新星「${word}」への跳躍に成功したぞ！`);
         }
       }, 100);
 
-      return { success: true, isVirtual: resData.isVirtual, message: resData.message };
+      return { success: true, uuid: newUuid, isVirtual: resData.isVirtual, message: resData.message };
 
     } catch (error) {
       console.error(error);
